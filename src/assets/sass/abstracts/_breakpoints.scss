@@ -1,0 +1,16 @@
+// Container breakpoints
+// (min-width: 384px)  => xs: 24em
+// (min-width: 576px)  => sm: 36em
+// (min-width: 768px)  => md: 48em,
+// (min-width: 992px)  => lg: 62em,
+// (min-width: 1200px) => xl: 75em,
+// (min-width: 1400px) => xxl: 87.5em
+$breakpoints: (xs: 24em, sm: 36em, md: 48em, lg: 62em, xl: 75em, xxl: 87.5em);
+
+@mixin mq($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: #{map-get($breakpoints, $breakpoint)}) {
+      @content;
+    }
+  }
+}

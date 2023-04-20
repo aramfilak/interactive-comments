@@ -1,0 +1,22 @@
+
+html {
+  font-size: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--white-2);
+}
+
+button {
+  cursor: pointer;
+}
+
+input {
+  font-family: inherit;
+}
+::selection {
+  color: var(--white-2);
+  background-color: var(--blue-green);
+}
