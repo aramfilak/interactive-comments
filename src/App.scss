@@ -1,0 +1,12 @@
+@use "./assets/sass/abstracts" as *;
+
+.app {
+  background-color: var(--light-gray);
+  height: 100vh;
+
+  .container {
+    display: flex;
+    justify-content: center;
+    max-width: rem(730);
+  }
+}

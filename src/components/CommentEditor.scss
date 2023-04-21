@@ -1,0 +1,90 @@
+@use "../assets/sass/abstracts" as *;
+
+.comment-editor {
+  width: 100%;
+  background-color: white;
+  padding: rem(16);
+  border-radius: rem(8);
+
+  .text-box {
+    width: 100%;
+    border-radius: rem(8);
+    font-family: inherit;
+    color: var(--grayish-blue);
+    resize: none;
+    height: rem(96);
+    padding: rem(12) rem(24);
+    margin-bottom: rem(10);
+    border: 1px solid var(--light-gray);
+  }
+
+  .text-box:focus {
+    outline-color: var(--moderate-blue);
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+
+    .user-image {
+      width: rem(32);
+      height: rem(32);
+    }
+
+    .submit-btn {
+      text-transform: uppercase;
+      background-color: var(--moderate-blue);
+      color: var(--white);
+      border-radius: rem(8);
+      font-weight: 500;
+      padding-inline: rem(30);
+      padding-block: rem(12);
+      transition: all 0.3s;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--light-grayish-blue);
+    }
+  }
+
+  @include mq(md) {
+
+    position: relative;
+    .text-box {
+      width: 75%;
+      transform: translateX(10%);
+
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+
+      .user-image {
+        position: absolute;
+        left: rem(12);
+        top: rem(18);
+        width: rem(40);
+        height: rem(40);
+      }
+
+      .submit-btn {
+        position: absolute;
+        right: rem(12);
+        top: rem(18);
+        text-transform: uppercase;
+        background-color: var(--moderate-blue);
+        color: var(--white);
+        border-radius: rem(8);
+        font-weight: 500;
+        padding-inline: rem(30);
+        padding-block: rem(12);
+        transition: all 0.3s;
+      }
+
+      .submit-btn:hover {
+        background-color: var(--light-grayish-blue);
+      }
+    }
+  }
+}
