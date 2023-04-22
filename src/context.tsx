@@ -22,7 +22,7 @@ export type Comment = {
   createdAt: string;
   score: number;
   user: User;
-  replies: Reply[];
+  replies?: Reply[];
 };
 type Comments = Comment[];
 

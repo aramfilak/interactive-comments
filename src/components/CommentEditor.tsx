@@ -1,16 +1,30 @@
 import "./CommentEditor.scss";
 import React, { useState } from "react";
 import { useGlobalContext } from "../context";
-import comment from "./Comment";
+import comment from "./UserComment";
 import { Comment } from "../context";
 
 interface Props {
   userImage: string;
+  userToReply?: string;
+  reply?: boolean;
+  send?: boolean;
 }
 
-const CommentEditor: React.FC<Props> = ({ userImage }) => {
-  const [comment, setComment] = useState<string>("");
+const CommentEditor: React.FC<Props> = ({
+  userImage,
+  userToReply,
+  reply,
+  send,
+}) => {
+  const [comment, setComment] = useState<string>(
+    send ? "" : `@${userToReply} `
+  );
   const { currentUser, comments, setComments } = useGlobalContext()!;
+
+  if (reply !== undefined && send !== undefined) {
+    throw Error('Please provide only one of "update" or "send" props');
+  }
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(event.target.value);
@@ -34,20 +48,19 @@ const CommentEditor: React.FC<Props> = ({ userImage }) => {
     };
     setComments([...comments, userComment]);
     setComment("");
-    console.log(comments);
   };
   return (
     <div className="comment-editor">
       <form onSubmit={handleSubmit}>
         <textarea
-          placeholder="Add a comment..."
+          placeholder={send ? "Add a comment..." : ""}
           onChange={handleChange}
           className="text-box"
           value={comment}
         ></textarea>
         <footer className="footer">
           <img className="user-image" src={userImage} alt="your image" />
-          <button className="submit-btn">send</button>
+          <button className="submit-btn">{send ? "send" : "reply"}</button>
         </footer>
       </form>
     </div>
