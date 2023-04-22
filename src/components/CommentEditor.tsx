@@ -17,7 +17,7 @@ const CommentEditor: React.FC<Props> = ({
   reply,
   send,
 }) => {
-  const [comment, setComment] = useState<string>(
+  const [commentContent, setCommentContent] = useState<string>(
     send ? "" : `@${userToReply} `
   );
   const { currentUser, comments, setComments } = useGlobalContext()!;
@@ -27,14 +27,14 @@ const CommentEditor: React.FC<Props> = ({
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setComment(event.target.value);
+    setCommentContent(event.target.value);
   };
   const handleSubmit = (event: React.FormEvent): void => {
     event.preventDefault();
 
     const userComment: Comment = {
       id: comments.length + 1,
-      content: comment,
+      content: commentContent,
       createdAt: "now",
       score: 0,
       user: {
@@ -46,8 +46,9 @@ const CommentEditor: React.FC<Props> = ({
       },
       replies: [],
     };
+    console.log(comments);
     setComments([...comments, userComment]);
-    setComment("");
+    setCommentContent("");
   };
   return (
     <div className="comment-editor">
@@ -56,7 +57,7 @@ const CommentEditor: React.FC<Props> = ({
           placeholder={send ? "Add a comment..." : ""}
           onChange={handleChange}
           className="text-box"
-          value={comment}
+          value={commentContent}
         ></textarea>
         <footer className="footer">
           <img className="user-image" src={userImage} alt="your image" />
