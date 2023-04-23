@@ -20,10 +20,7 @@ const App: React.FC = (): JSX.Element => {
   const { currentUser, comments } = useGlobalContext()!;
   const renderedComments = comments.map((comment, idx) => {
     return (
-      <div
-        className="user-comment"
-        key={`${idx}-${comment.user.username}-${comment.createdAt}`}
-      >
+      <div className="user-comment" key={`${idx}-${comment.user.username}-${comment.createdAt}`}>
         <UserComment
           id={comment.id}
           content={comment.content}
@@ -31,6 +28,7 @@ const App: React.FC = (): JSX.Element => {
           score={comment.score}
           user={comment.user}
           userImage={userImages[comment.user.username]}
+          replies={comment.replies}
         />
         {comment.replies && (
           <div className="replies">

@@ -14,6 +14,14 @@ interface Props {
   replyingTo?: string;
 }
 
+type userFeedback = {
+  agree: boolean;
+  disagree: boolean;
+  feedbackGiven: boolean;
+};
+
+const AGREE: string = "AGREE";
+const DISAGREE: string = "DISAGREE";
 const UserComment: React.FC<Props & Comment> = ({
   id,
   content,
@@ -22,9 +30,61 @@ const UserComment: React.FC<Props & Comment> = ({
   user,
   userImage,
   replyingTo,
+  replies,
 }): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [userFeedBack, setUserFeedback] = useState<userFeedback>({
+    agree: false,
+    disagree: false,
+    feedbackGiven: false,
+  });
   const { currentUser, comments, setComments } = useGlobalContext()!;
+
+  const updateCommentScore = (feedbackType: string): void => {
+    const updatedComments: Comment[] = comments.map((comment) => {
+      if (comment.replies) {
+        comment.replies = comment.replies.map((reply) => {
+          if (reply.id === id) {
+            feedbackType === AGREE ? reply.score++ : reply.score--;
+          }
+          return reply;
+        });
+      }
+      if (comment.id === id) {
+        feedbackType === AGREE ? comment.score++ : comment.score--;
+      }
+      return comment;
+    });
+    setComments(updatedComments);
+  };
+  const handleUserFeedback = (feedbackType: string): void => {
+    if (user.username === currentUser.username) return;
+
+    if (feedbackType === AGREE && (!userFeedBack.feedbackGiven || userFeedBack.disagree)) {
+      updateCommentScore(AGREE);
+      if (!userFeedBack.feedbackGiven) {
+        setUserFeedback({
+          agree: true,
+          disagree: false,
+          feedbackGiven: !userFeedBack.feedbackGiven,
+        });
+      } else {
+        setUserFeedback({ agree: true, disagree: false, feedbackGiven: false });
+      }
+      return;
+    }
+
+    if (feedbackType === DISAGREE && (!userFeedBack.feedbackGiven || userFeedBack.agree)) {
+      updateCommentScore(DISAGREE);
+      if (!userFeedBack.feedbackGiven) {
+        setUserFeedback({ agree: false, disagree: true, feedbackGiven: true });
+      } else {
+        setUserFeedback({ agree: false, disagree: true, feedbackGiven: false });
+      }
+      return;
+    }
+  };
+
   const deleteComment = (): void => {
     const undeletedComments: Comment[] = comments.filter((comment) => {
       if (comment.id === id) {
@@ -37,51 +97,35 @@ const UserComment: React.FC<Props & Comment> = ({
     });
     setComments(undeletedComments);
   };
-  const modalRoot = document.getElementById("modal-root");
+
   return (
     <div className="comment">
       <header className="header">
-        <img
-          className="user-image"
-          src={userImage}
-          alt={`${user.username} image`}
-        />
+        <img className="user-image" src={userImage} alt={`${user.username} image`} />
 
         <p className="user-name">{user.username}</p>
-        {currentUser.username === user.username && (
-          <p className="current-user-label">you</p>
-        )}
+        {currentUser.username === user.username && <p className="current-user-label">you</p>}
         <p className="comment-date">{createdAt}</p>
       </header>
       <div className="comment-content">
-        {replyingTo !== undefined && (
-          <span className="replying-to">{`@${replyingTo} `}</span>
-        )}
+        {replyingTo !== undefined && <span className="replying-to">{`@${replyingTo} `}</span>}
         {content}
       </div>
       <footer className="footer">
         <div className="agree-and-disagree-button">
-          <button className="agree btn">
+          <button onClick={() => handleUserFeedback(AGREE)} className="agree btn">
             <img className="agree-icon" src={PlusIcon} alt="agree icon" />
           </button>
           <span className="score"> {score}</span>
-          <button className="disagree btn">
-            <img
-              className="disagree-icon"
-              src={MinusIcon}
-              alt="disagree icon"
-            />
+          <button onClick={() => handleUserFeedback(DISAGREE)} className="disagree btn">
+            <img className="disagree-icon" src={MinusIcon} alt="disagree icon" />
           </button>
         </div>
         <div className="interaction-bar">
           {user.username === currentUser.username ? (
             <>
               <button onClick={() => setShowModal(true)} className="delete btn">
-                <img
-                  className="delete-icon"
-                  src={DeleteIcon}
-                  alt="delete icon"
-                />
+                <img className="delete-icon" src={DeleteIcon} alt="delete icon" />
                 Delete
               </button>
               <button className="edit btn">
@@ -117,5 +161,4 @@ const UserComment: React.FC<Props & Comment> = ({
     </div>
   );
 };
-
 export default UserComment;
