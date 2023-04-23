@@ -30,7 +30,6 @@ const UserComment: React.FC<Props & Comment> = ({
   user,
   userImage,
   replyingTo,
-  replies,
 }): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [userFeedBack, setUserFeedback] = useState<userFeedback>({
@@ -57,6 +56,7 @@ const UserComment: React.FC<Props & Comment> = ({
     });
     setComments(updatedComments);
   };
+
   const handleUserFeedback = (feedbackType: string): void => {
     if (user.username === currentUser.username) return;
 
@@ -68,19 +68,16 @@ const UserComment: React.FC<Props & Comment> = ({
           disagree: false,
           feedbackGiven: !userFeedBack.feedbackGiven,
         });
-      } else {
-        setUserFeedback({ agree: true, disagree: false, feedbackGiven: false });
       }
       return;
     }
-
     if (feedbackType === DISAGREE && (!userFeedBack.feedbackGiven || userFeedBack.agree)) {
       updateCommentScore(DISAGREE);
-      if (!userFeedBack.feedbackGiven) {
-        setUserFeedback({ agree: false, disagree: true, feedbackGiven: true });
-      } else {
-        setUserFeedback({ agree: false, disagree: true, feedbackGiven: false });
-      }
+      setUserFeedback({
+        agree: false,
+        disagree: true,
+        feedbackGiven: !userFeedBack.feedbackGiven,
+      });
       return;
     }
   };
