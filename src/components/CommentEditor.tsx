@@ -1,37 +1,47 @@
 import "./CommentEditor.scss";
 import React, { useState } from "react";
-import { useGlobalContext } from "../context";
-import { User, Comment, Reply } from "../context";
+import context, { User, Comment, Reply, useGlobalContext, userImages } from "../context";
 
 type userToReply = {
   id: number;
-  user: User;
+  user?: User;
   replyingTo?: string;
+  createdAt?: string;
 };
 
 interface Props {
-  currentUserImage: string;
   userToReply?: userToReply;
   reply?: boolean;
   send?: boolean;
-  setShowCommentEditor: React.Dispatch<React.SetStateAction<boolean>>;
+  edit?: boolean;
+  currentCommentContent?: string;
+  setShowReplyEditor?: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowEditBox?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const CommentEditor: React.FC<Props> = ({
-  currentUserImage,
   userToReply,
   reply,
   send,
-  setShowCommentEditor,
+  edit,
+  setShowReplyEditor,
+  currentCommentContent,
+  setShowEditBox,
 }) => {
   const [commentContent, setCommentContent] = useState<string>(
-    send ? "" : `@${userToReply?.user.username} `
+    send
+      ? ""
+      : reply
+      ? `@${userToReply?.user?.username} `
+      : `${userToReply?.replyingTo! ? "@" : ""}${
+          userToReply?.replyingTo! || ""
+        } ${currentCommentContent}`
   );
 
   const { currentUser, comments, setComments } = useGlobalContext()!;
 
-  if (reply !== undefined && send !== undefined) {
-    throw Error('Please provide only one of "update" or "send" props');
+  if ([reply, send, edit].filter(Boolean).length !== 1) {
+    throw new Error('Please provide only one of "reply", "send", or "edit" props');
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -40,13 +50,36 @@ const CommentEditor: React.FC<Props> = ({
   const handleSubmit = (event: React.FormEvent): void => {
     event.preventDefault();
 
+    if (edit) {
+      const content: string = commentContent.replace(`@${userToReply?.replyingTo}`, "");
+      const updatedComments: Comment[] = comments.map((comment) => {
+        if (comment.replies) {
+          comment.replies.map((reply) => {
+            if (reply.id === userToReply?.id!) {
+              reply.content = content;
+              reply.createdAt = "now";
+            }
+            return reply;
+          });
+        }
+        if (comment.id === userToReply?.id!) {
+          comment.content = content;
+          comment.createdAt = "now";
+        }
+        return comment;
+      });
+
+      setComments(updatedComments);
+      setShowEditBox?.(false);
+    }
     if (reply) {
+      const content: string = commentContent.replace(`@${userToReply?.user?.username}`, "");
       const currentUserReply: Reply = {
         id: Math.random() * 9999,
-        content: commentContent.replace(`@${userToReply?.user.username!}`, ""),
+        content: content,
         createdAt: "now",
         score: 0,
-        replyingTo: userToReply?.user.username!,
+        replyingTo: userToReply?.user?.username!,
         user: {
           image: {
             png: currentUser.image.png,
@@ -71,7 +104,7 @@ const CommentEditor: React.FC<Props> = ({
       });
 
       setComments(updatedComments);
-      setShowCommentEditor(false);
+      setShowReplyEditor?.(false);
     }
 
     if (send) {
@@ -92,12 +125,10 @@ const CommentEditor: React.FC<Props> = ({
       setComments([...comments, userComment]);
     }
     setCommentContent("");
-
-    console.log(comments);
   };
 
   return (
-    <div className="comment-editor">
+    <div className={!edit ? "comment-editor" : "comment-editor edit"}>
       <form onSubmit={handleSubmit}>
         <textarea
           placeholder={send ? "Add a comment..." : ""}
@@ -106,12 +137,14 @@ const CommentEditor: React.FC<Props> = ({
           value={commentContent}
         ></textarea>
         <footer className="footer">
-          <img className="user-image" src={currentUserImage} alt="your image" />
-          <button className="submit-btn">{send ? "send" : "reply"}</button>
+          {!edit && (
+            <img className="user-image" src={userImages[currentUser.username]} alt="your image" />
+          )}
+
+          <button className="submit-btn">{send ? "send" : reply ? "reply" : "update"}</button>
         </footer>
       </form>
     </div>
   );
 };
-
 export default CommentEditor;

@@ -8,7 +8,6 @@ import ReplyIcon from "../assets/images/icon-reply.svg";
 import PlusIcon from "../assets/images/icon-plus.svg";
 import MinusIcon from "../assets/images/icon-minus.svg";
 import CommentEditor from "./CommentEditor";
-import { userImages } from "../context";
 
 interface Props {
   userImage: string;
@@ -33,7 +32,8 @@ const UserComment: React.FC<Props & Comment> = ({
   userImage,
   replyingTo,
 }): JSX.Element => {
-  const [showCommentEditor, setShowCommentEditor] = useState<boolean>(false);
+  const [showEditBox, setShowEditBox] = useState<boolean>(false);
+  const [showReplyEditor, setShowReplyEditor] = useState<boolean>(false);
   const [userFeedBack, setUserFeedback] = useState<userFeedback>({
     agree: false,
     disagree: false,
@@ -80,63 +80,81 @@ const UserComment: React.FC<Props & Comment> = ({
   };
 
   return (
-    <div className="comment">
-      <header className="header">
-        <img className="user-image" src={userImage} alt={`${user.username} image`} />
+    <>
+      <div className="comment">
+        {/*COMMENT HEADER*/}
+        <header className="header">
+          <img className="user-image" src={userImage} alt={`${user.username} image`} />
 
-        <p className="user-name">{user.username}</p>
-        {currentUser.username === user.username && <p className="current-user-label">you</p>}
-        <p className="comment-date">{createdAt}</p>
-      </header>
-      <div className="comment-content">
-        {replyingTo !== undefined && <span className="replying-to">{`@${replyingTo} `}</span>}
-        {content}
-      </div>
-      <footer className="footer">
-        <div className="agree-and-disagree-button">
-          <button onClick={() => handleUserFeedback(AGREE)} className="agree btn">
-            <img className="agree-icon" src={PlusIcon} alt="agree icon" />
-          </button>
-          <span className="score"> {score}</span>
-          <button onClick={() => handleUserFeedback(DISAGREE)} className="disagree btn">
-            <img className="disagree-icon" src={MinusIcon} alt="disagree icon" />
-          </button>
-        </div>
-        <div className="interaction-bar">
-          {user.username === currentUser.username ? (
-            <>
-              <button
-                onClick={() => {
-                  setCommentID(id);
-                  setShowModal(true);
-                }}
-                className="delete btn"
-              >
-                <img className="delete-icon" src={DeleteIcon} alt="delete icon" />
-                Delete
-              </button>
-              <button className="edit btn">
-                <img className="edit-icon" src={EditIcon} alt="edit icon" />
-                Edit
-              </button>
-            </>
-          ) : (
-            <button onClick={() => setShowCommentEditor(!showCommentEditor)} className="reply btn">
-              <img className="reply-icon" src={ReplyIcon} alt="reply icon" />
-              Replay
+          <p className="user-name">{user.username}</p>
+          {currentUser.username === user.username && <p className="current-user-label">you</p>}
+          <p className="comment-date">{createdAt}</p>
+        </header>
+
+        {/*COMMENT CONTENT*/}
+        {!showEditBox && (
+          <div className="comment-content">
+            {replyingTo !== undefined && <span className="replying-to">{`@${replyingTo} `}</span>}
+            {content}
+          </div>
+        )}
+
+        {showEditBox && (
+          <CommentEditor
+            edit
+            setShowEditBox={setShowEditBox}
+            currentCommentContent={content}
+            userToReply={{ id, user, replyingTo }}
+          />
+        )}
+
+        {/*COMMENT FOOTER*/}
+        <footer className="footer">
+          <div className="agree-and-disagree-button">
+            <button onClick={() => handleUserFeedback(AGREE)} className="agree btn">
+              <img className="agree-icon" src={PlusIcon} alt="agree icon" />
             </button>
-          )}
-        </div>
-      </footer>
-      {showCommentEditor && (
+            <span className="score"> {score}</span>
+            <button onClick={() => handleUserFeedback(DISAGREE)} className="disagree btn">
+              <img className="disagree-icon" src={MinusIcon} alt="disagree icon" />
+            </button>
+          </div>
+          <div className="interaction-bar">
+            {user.username === currentUser.username ? (
+              <>
+                <button
+                  onClick={() => {
+                    setCommentID(id);
+                    setShowModal(true);
+                  }}
+                  className="delete btn"
+                >
+                  <img className="delete-icon" src={DeleteIcon} alt="delete icon" />
+                  Delete
+                </button>
+                <button onClick={() => setShowEditBox(!showEditBox)} className="edit btn">
+                  <img className="edit-icon" src={EditIcon} alt="edit icon" />
+                  Edit
+                </button>
+              </>
+            ) : (
+              <button onClick={() => setShowReplyEditor(!showReplyEditor)} className="reply btn">
+                <img className="reply-icon" src={ReplyIcon} alt="reply icon" />
+                Replay
+              </button>
+            )}
+          </div>
+        </footer>
+      </div>
+
+      {showReplyEditor && (
         <CommentEditor
           reply
           userToReply={{ id, user, replyingTo }}
-          currentUserImage={userImages[currentUser.username]}
-          setShowCommentEditor={setShowCommentEditor}
+          setShowReplyEditor={setShowReplyEditor}
         />
       )}
-    </div>
+    </>
   );
 };
 export default UserComment;
