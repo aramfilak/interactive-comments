@@ -1,14 +1,13 @@
 import "./App.scss";
 import React from "react";
 import CommentEditor from "./components/CommentEditor";
-import { Comment, useGlobalContext } from "./context";
+import { useGlobalContext } from "./context";
 import { userImages } from "./context";
 import UserComment from "./components/UserComment";
 import Modal from "./components/Modal";
 
 const App: React.FC = (): JSX.Element => {
-  const { commentID, deleteComment, currentUser, comments, showModal, setShowModal } =
-    useGlobalContext()!;
+  const { commentID, deleteComment, comments, showModal, setShowModal } = useGlobalContext()!;
 
   const renderedComments = comments.map((comment, idx) => {
     return (
@@ -67,7 +66,7 @@ const App: React.FC = (): JSX.Element => {
 
       <div className="container">
         <div className="comments">{renderedComments}</div>
-        <CommentEditor send currentUserImage={userImages[currentUser.username]} />
+        <CommentEditor send />
       </div>
     </div>
   );

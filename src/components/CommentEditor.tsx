@@ -1,6 +1,6 @@
 import "./CommentEditor.scss";
 import React, { useState } from "react";
-import context, { User, Comment, Reply, useGlobalContext, userImages } from "../context";
+import { User, Comment, Reply, useGlobalContext, userImages } from "../context";
 
 type userToReply = {
   id: number;
@@ -57,14 +57,12 @@ const CommentEditor: React.FC<Props> = ({
           comment.replies.map((reply) => {
             if (reply.id === userToReply?.id!) {
               reply.content = content;
-              reply.createdAt = "now";
             }
             return reply;
           });
         }
         if (comment.id === userToReply?.id!) {
           comment.content = content;
-          comment.createdAt = "now";
         }
         return comment;
       });
