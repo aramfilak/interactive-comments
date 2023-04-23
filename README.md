@@ -2,12 +2,12 @@
 
 ![Design preview for the Interactive comments section coding challenge](./src/assets/design/desktop-preview.jpg);
 
-### [➡ Go Live ](https://github-user-search-pnf5ugleh-aramfilak.vercel.app/)
+### [🔗 Go Live ](https://interactive-comments-xi.vercel.app/)
 
-### [➡ Challenge Link](https://www.frontendmentor.io/challenges/interactive-comments-section-iG1RugEG9)
+### [🔗 Challenge Link](https://www.frontendmentor.io/challenges/interactive-comments-section-iG1RugEG9)
 
 ---
-**To run project locally**
+**Run project locally**
 ```
 npm install
 ```
