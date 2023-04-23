@@ -1,14 +1,24 @@
 import React, { createContext, useContext, useState } from "react";
 import data from "./assets/data.json";
+import amyrobsonImage from "./assets/images/avatars/image-amyrobson.png";
+import maxblagunImage from "./assets/images/avatars/image-maxblagun.png";
+import ramsesmironImage from "./assets/images/avatars/image-ramsesmiron.png";
+import juliusomoImage from "./assets/images/avatars/image-juliusomo.png";
 
-type User = {
+export const userImages: { [key: string]: string } = {
+  amyrobson: amyrobsonImage,
+  maxblagun: maxblagunImage,
+  ramsesmiron: ramsesmironImage,
+  juliusomo: juliusomoImage,
+};
+export type User = {
   image: {
     png: string;
     webp: string;
   };
   username: string;
 };
-type Reply = {
+export type Reply = {
   id: number;
   content: string;
   createdAt: string;
@@ -22,7 +32,7 @@ export type Comment = {
   createdAt: string;
   score: number;
   user: User;
-  replies?: Reply[];
+  replies: Reply[];
 };
 type Comments = Comment[];
 
@@ -34,15 +44,44 @@ type AppContextValue = {
   currentUser: User;
   comments: Comments;
   setComments: React.Dispatch<React.SetStateAction<Comments>>;
+  showModal: boolean;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  deleteComment: (arg: number) => void;
+  commentID: number;
+  setCommentID: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const currentUser: User = data.currentUser;
 const AppContext = createContext<null | AppContextValue>(null);
 const Provider: React.FC<Props> = ({ children }) => {
   const [comments, setComments] = useState<Comment[]>(data.comments);
-
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [commentID, setCommentID] = useState<number>(0);
+  const deleteComment = (commentID: number): void => {
+    const undeletedComments: Comment[] = comments.filter((comment) => {
+      if (comment.id === commentID) {
+        return false;
+      }
+      if (comment.replies) {
+        comment.replies = comment.replies.filter((reply) => reply.id !== commentID);
+      }
+      return true;
+    });
+    setComments(undeletedComments);
+  };
   return (
-    <AppContext.Provider value={{ currentUser, comments, setComments }}>
+    <AppContext.Provider
+      value={{
+        currentUser,
+        comments,
+        setComments,
+        showModal,
+        setShowModal,
+        deleteComment,
+        commentID,
+        setCommentID,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

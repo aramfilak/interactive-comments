@@ -1,23 +1,15 @@
 import "./App.scss";
 import React from "react";
 import CommentEditor from "./components/CommentEditor";
-import amyrobsonImage from "./assets/images/avatars/image-amyrobson.png";
-import maxblagunImage from "./assets/images/avatars/image-maxblagun.png";
-import ramsesmironImage from "./assets/images/avatars/image-ramsesmiron.png";
-import juliusomoImage from "./assets/images/avatars/image-juliusomo.png";
-import { useGlobalContext } from "./context";
-
+import { Comment, useGlobalContext } from "./context";
+import { userImages } from "./context";
 import UserComment from "./components/UserComment";
-
-const userImages: { [key: string]: string } = {
-  amyrobson: amyrobsonImage,
-  maxblagun: maxblagunImage,
-  ramsesmiron: ramsesmironImage,
-  juliusomo: juliusomoImage,
-};
+import Modal from "./components/Modal";
 
 const App: React.FC = (): JSX.Element => {
-  const { currentUser, comments } = useGlobalContext()!;
+  const { commentID, deleteComment, currentUser, comments, showModal, setShowModal } =
+    useGlobalContext()!;
+
   const renderedComments = comments.map((comment, idx) => {
     return (
       <div className="user-comment" key={`${idx}-${comment.user.username}-${comment.createdAt}`}>
@@ -44,6 +36,7 @@ const App: React.FC = (): JSX.Element => {
                   score={reply.score}
                   user={reply.user}
                   replyingTo={reply.replyingTo}
+                  replies={comment.replies}
                 />
               );
             })}
@@ -55,9 +48,26 @@ const App: React.FC = (): JSX.Element => {
 
   return (
     <div className="app">
+      {showModal && (
+        <Modal
+          subject={"Delete comment"}
+          message={
+            "Are you sure you want to delete this comment? This will remove the comment and can't be undone."
+          }
+          actionBtnText={"yes, delete"}
+          actionBtnColor={"#ED6368"}
+          actionBtnCallback={() => deleteComment(commentID)}
+          actionBtnTextColor={"#fff"}
+          closeModalBtnText={"no, cancel"}
+          closeModalBtnColor={"#67727E"}
+          closeModalBtnTextColor={"#fff"}
+          setShowModal={setShowModal}
+        />
+      )}
+
       <div className="container">
         <div className="comments">{renderedComments}</div>
-        <CommentEditor send userImage={userImages[currentUser.username]} />
+        <CommentEditor send currentUserImage={userImages[currentUser.username]} />
       </div>
     </div>
   );

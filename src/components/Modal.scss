@@ -10,13 +10,15 @@
   width: 100%;
   left: 0;
   top: 0;
-
+  opacity: 0;
+  animation: v-modal-out .3s ease-out forwards;
 
   .overlay {
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: #000;
     height: 100%;
     width: 100%;
+    opacity: 0.4;
   }
 
   .content {

@@ -7,7 +7,8 @@ import EditIcon from "../assets/images/icon-edit.svg";
 import ReplyIcon from "../assets/images/icon-reply.svg";
 import PlusIcon from "../assets/images/icon-plus.svg";
 import MinusIcon from "../assets/images/icon-minus.svg";
-import Modal from "./Modal";
+import CommentEditor from "./CommentEditor";
+import { userImages } from "../context";
 
 interface Props {
   userImage: string;
@@ -22,6 +23,7 @@ type userFeedback = {
 
 const AGREE: string = "AGREE";
 const DISAGREE: string = "DISAGREE";
+
 const UserComment: React.FC<Props & Comment> = ({
   id,
   content,
@@ -31,13 +33,13 @@ const UserComment: React.FC<Props & Comment> = ({
   userImage,
   replyingTo,
 }): JSX.Element => {
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showCommentEditor, setShowCommentEditor] = useState<boolean>(false);
   const [userFeedBack, setUserFeedback] = useState<userFeedback>({
     agree: false,
     disagree: false,
     feedbackGiven: false,
   });
-  const { currentUser, comments, setComments } = useGlobalContext()!;
+  const { currentUser, comments, setComments, setShowModal, setCommentID } = useGlobalContext()!;
 
   const updateCommentScore = (feedbackType: string): void => {
     const updatedComments: Comment[] = comments.map((comment) => {
@@ -60,39 +62,21 @@ const UserComment: React.FC<Props & Comment> = ({
   const handleUserFeedback = (feedbackType: string): void => {
     if (user.username === currentUser.username) return;
 
-    if (feedbackType === AGREE && (!userFeedBack.feedbackGiven || userFeedBack.disagree)) {
+    if (feedbackType === AGREE && !userFeedBack.agree) {
       updateCommentScore(AGREE);
       if (!userFeedBack.feedbackGiven) {
-        setUserFeedback({
-          agree: true,
-          disagree: false,
-          feedbackGiven: !userFeedBack.feedbackGiven,
-        });
+        setUserFeedback({ agree: true, disagree: false, feedbackGiven: true });
+      } else {
+        setUserFeedback({ agree: false, disagree: false, feedbackGiven: false });
       }
-      return;
-    }
-    if (feedbackType === DISAGREE && (!userFeedBack.feedbackGiven || userFeedBack.agree)) {
+    } else if (feedbackType === DISAGREE && !userFeedBack.disagree) {
       updateCommentScore(DISAGREE);
-      setUserFeedback({
-        agree: false,
-        disagree: true,
-        feedbackGiven: !userFeedBack.feedbackGiven,
-      });
-      return;
+      if (!userFeedBack.feedbackGiven) {
+        setUserFeedback({ agree: false, disagree: true, feedbackGiven: true });
+      } else {
+        setUserFeedback({ agree: false, disagree: false, feedbackGiven: false });
+      }
     }
-  };
-
-  const deleteComment = (): void => {
-    const undeletedComments: Comment[] = comments.filter((comment) => {
-      if (comment.id === id) {
-        return false;
-      }
-      if (comment.replies) {
-        comment.replies = comment.replies.filter((reply) => reply.id !== id);
-      }
-      return true;
-    });
-    setComments(undeletedComments);
   };
 
   return (
@@ -121,7 +105,13 @@ const UserComment: React.FC<Props & Comment> = ({
         <div className="interaction-bar">
           {user.username === currentUser.username ? (
             <>
-              <button onClick={() => setShowModal(true)} className="delete btn">
+              <button
+                onClick={() => {
+                  setCommentID(id);
+                  setShowModal(true);
+                }}
+                className="delete btn"
+              >
                 <img className="delete-icon" src={DeleteIcon} alt="delete icon" />
                 Delete
               </button>
@@ -131,28 +121,19 @@ const UserComment: React.FC<Props & Comment> = ({
               </button>
             </>
           ) : (
-            <button className="reply btn">
+            <button onClick={() => setShowCommentEditor(!showCommentEditor)} className="reply btn">
               <img className="reply-icon" src={ReplyIcon} alt="reply icon" />
               Replay
             </button>
           )}
         </div>
       </footer>
-
-      {showModal && (
-        <Modal
-          subject={"Delete comment"}
-          message={
-            "Are you sure you want to delete this comment? This will remove the comment and can't be undone."
-          }
-          actionBtnText={"yes, delete"}
-          actionBtnColor={"#ED6368"}
-          actionBtnCallback={deleteComment}
-          actionBtnTextColor={"#fff"}
-          closeModalBtnText={"no, cancel"}
-          closeModalBtnColor={"#67727E"}
-          closeModalBtnTextColor={"#fff"}
-          setShowModal={setShowModal}
+      {showCommentEditor && (
+        <CommentEditor
+          reply
+          userToReply={{ id, user, replyingTo }}
+          currentUserImage={userImages[currentUser.username]}
+          setShowCommentEditor={setShowCommentEditor}
         />
       )}
     </div>
