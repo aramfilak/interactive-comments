@@ -5,9 +5,11 @@
   min-height: 100vh;
   padding-block: rem(64);
   padding-inline: rem(12);
- display: flex;
+  display: flex;
   justify-content: center;
+
   .container {
+    min-width: rem(345);
     max-width: rem(730);
   }
 
@@ -16,5 +18,12 @@
     border-left: 2px solid rgba(0, 0, 0, 0.08);
 
   }
+
+  @include mq(md) {
+    .container {
+      min-width: rem(730);
+    }
+  }
+
 
 }

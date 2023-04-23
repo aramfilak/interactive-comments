@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import data from "./assets/data.json";
 import amyrobsonImage from "./assets/images/avatars/image-amyrobson.png";
 import maxblagunImage from "./assets/images/avatars/image-maxblagun.png";
@@ -55,6 +55,7 @@ const currentUser: User = data.currentUser;
 const AppContext = createContext<null | AppContextValue>(null);
 const Provider: React.FC<Props> = ({ children }) => {
   const [comments, setComments] = useState<Comment[]>(data.comments);
+
   const [showModal, setShowModal] = useState<boolean>(false);
   const [commentID, setCommentID] = useState<number>(0);
   const deleteComment = (commentID: number): void => {
