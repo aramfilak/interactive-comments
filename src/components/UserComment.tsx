@@ -8,7 +8,6 @@ import ReplyIcon from "../assets/images/icon-reply.svg";
 import PlusIcon from "../assets/images/icon-plus.svg";
 import MinusIcon from "../assets/images/icon-minus.svg";
 import CommentEditor from "./CommentEditor";
-
 interface Props {
   userImage: string;
   replyingTo?: string;
