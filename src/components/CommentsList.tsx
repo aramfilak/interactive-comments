@@ -1,6 +1,7 @@
+import "./CommentsList.scss";
 import React from "react";
-import { userImages } from "../context";
 import UserComment from "./UserComment";
+import { userImages } from "../context";
 import { useGlobalContext } from "../context";
 
 const CommentsList: React.FC = (): JSX.Element => {
