@@ -1,6 +1,6 @@
 import "./Modal.scss";
 import React from "react";
-
+import { useGlobalContext } from "../context";
 interface ModalProps {
   subject: string;
   message: string;
@@ -11,7 +11,6 @@ interface ModalProps {
   closeModalBtnText: string;
   closeModalBtnTextColor?: string;
   closeModalBtnColor: string;
-  setShowModal: (arg: boolean) => void;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -24,12 +23,8 @@ const Modal: React.FC<ModalProps> = ({
   closeModalBtnTextColor,
   closeModalBtnText,
   closeModalBtnColor,
-  setShowModal,
 }) => {
-  function handleActionClick() {
-    actionBtnCallback();
-    setShowModal(false);
-  }
+  const { setShowModal } = useGlobalContext()!;
 
   return (
     <div className="modal">
@@ -54,7 +49,7 @@ const Modal: React.FC<ModalProps> = ({
               backgroundColor: actionBtnColor,
               color: actionBtnTextColor,
             }}
-            onClick={handleActionClick}
+            onClick={actionBtnCallback}
           >
             {actionBtnText}
           </button>

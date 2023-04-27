@@ -23,7 +23,6 @@ const App: React.FC = (): JSX.Element => {
           closeModalBtnText={"no, cancel"}
           closeModalBtnColor={"#67727E"}
           closeModalBtnTextColor={"#fff"}
-          setShowModal={setShowModal}
         />
       )}
 
