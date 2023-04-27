@@ -1,13 +1,14 @@
 import "./CommentEditor.scss";
 import React, { useState } from "react";
-import { User, Comment, Reply, useGlobalContext, userImages } from "../context";
+import { useGlobalContext, userImages } from "../context";
+import { User, Reply, Comment } from "../comment";
 
-type userToReply = {
+interface userToReply {
   id: number;
   user?: User;
   replyingTo?: string;
   createdAt?: string;
-};
+}
 
 interface Props {
   userToReply?: userToReply;

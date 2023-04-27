@@ -4,6 +4,7 @@ import amyrobsonImage from "./assets/images/avatars/image-amyrobson.png";
 import maxblagunImage from "./assets/images/avatars/image-maxblagun.png";
 import ramsesmironImage from "./assets/images/avatars/image-ramsesmiron.png";
 import juliusomoImage from "./assets/images/avatars/image-juliusomo.png";
+import { User, Comment } from "./comment";
 
 export const userImages: { [key: string]: string } = {
   amyrobson: amyrobsonImage,
@@ -11,30 +12,6 @@ export const userImages: { [key: string]: string } = {
   ramsesmiron: ramsesmironImage,
   juliusomo: juliusomoImage,
 };
-export type User = {
-  image: {
-    png: string;
-    webp: string;
-  };
-  username: string;
-};
-export type Reply = {
-  id: number;
-  content: string;
-  createdAt: string;
-  score: number;
-  replyingTo: string;
-  user: User;
-};
-export type Comment = {
-  id: number;
-  content: string;
-  createdAt: string;
-  score: number;
-  user: User;
-  replies: Reply[];
-};
-type Comments = Comment[];
 
 interface Props {
   children: React.ReactNode;
@@ -42,8 +19,8 @@ interface Props {
 
 type AppContextValue = {
   currentUser: User;
-  comments: Comments;
-  setComments: React.Dispatch<React.SetStateAction<Comments>>;
+  comments: Comment[];
+  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   deleteComment: (arg: number) => void;

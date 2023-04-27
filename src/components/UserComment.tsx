@@ -1,7 +1,7 @@
 import "./UserComment.scss";
 import React, { useState } from "react";
 import { useGlobalContext } from "../context";
-import { Comment } from "../context";
+import { Comment } from "../comment";
 import DeleteIcon from "../assets/images/icon-delete.svg";
 import EditIcon from "../assets/images/icon-edit.svg";
 import ReplyIcon from "../assets/images/icon-reply.svg";
